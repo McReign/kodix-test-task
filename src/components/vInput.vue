@@ -4,14 +4,14 @@
             class="v-input"
             :type="type"
             :disabled="disabled"
-            :value="value"
+            :value="ownValue"
             :min="min"
             :max="max"
             @focus="handleInputFocus"
             @blur="handleInputBlur"
             @input="handleInput"
         >
-        <label :class="{'label': true, 'shown': focused || value}">{{placeholder}}</label>
+        <label :class="{'label': true, 'shown': focused || ownValue}">{{placeholder}}</label>
     </div>
 </template>
 
@@ -33,7 +33,7 @@
             },
             width: {
                 type: String,
-                default: '260px'
+                default: '100%'
             },
             disabled: {
                 type: Boolean,
@@ -52,7 +52,8 @@
         },
         data () {
             return {
-                focused: false
+                focused: false,
+                ownValue: ''
             }
         },
         methods: {
@@ -64,19 +65,13 @@
             },
             handleInput (e) {
                 let value = e.target.value
-
-                // Make it works //////////////////////////////////////////////
-                // console.log(+this.value, +this.min, +this.value, +this.max)
-
-                // if (this.type === 'number') {
-                //     +this.value < +this.min ?
-                //         value = this.min
-                //         : +this.value > +this.max ?
-                //             value = this.max
-                //             : null
-                // }
-
+                this.ownValue = value
                 this.$emit('input', value)
+            }
+        },
+        created () {
+            if (this.value) {
+                this.ownValue = this.value
             }
         }
     }

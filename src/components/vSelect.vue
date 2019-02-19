@@ -5,14 +5,13 @@
             :disabled="disabled"
             @click="handleSelectClick"
         >
-            <!--<input class="phantom-input" @blur="handleClose">-->
             <div class="selected-item">
-                {{getNameByValue(value || ownValue)}}
+                {{getNameByValue(ownValue)}}
             </div>
             <img class="down-icon" src="../assets/arrow_down.svg">
         </div>
-        <div :class="{'v-select-list': true, 'shown': focused}">
-            <div v-for="(item, index) in values" class="list-item" @click="() => handleSelect(item)">
+        <div :class="{'v-select-list': true, 'shown': focused}" @click="handleSelectListClick">
+            <div v-for="(item, index) in values" class="list-item" @click="(e) => handleSelect(e, item)" :key="item.value">
                 {{item.name}}
             </div>
         </div>
@@ -21,6 +20,8 @@
 </template>
 
 <script>
+    import { EventBus } from "../main";
+
     export default {
         name: "vSelect",
         props: {
@@ -34,7 +35,7 @@
             },
             width: {
                 type: String,
-                default: '260px'
+                default: '100%'
             },
             disabled: {
                 type: Boolean,
@@ -67,7 +68,8 @@
             handleClose (e) {
                 this.focused = false
             },
-            handleSelect (item) {
+            handleSelect (e, item) {
+                e.stopPropagation()
                 this.focused = false
                 this.ownValue = item.value
                 this.hasSelected = true
@@ -81,14 +83,16 @@
                 return listItem ? listItem.name : ''
             }
         },
-        created() {
+        created () {
+            EventBus.$on('background-click', this.handleClose)
+
             if (this.value) {
                 this.hasSelected = true
-                this.ownValue = this.getNameByValue(this.value)
+                this.ownValue = this.value
             }
         },
-        beforeDestroy() {
-
+        destroyed () {
+            EventBus.$off('background-click', this.handleClose)
         }
     }
 </script>

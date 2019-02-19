@@ -19,7 +19,14 @@
         box-sizing: border-box;
 
         &__logo {
+            width: 100%;
+            height: 100%;
             margin-top: 6px;
+        }
+
+        @media all and (max-width: 506px) {
+            height: 81px;
+            padding: 0 10px;
         }
     }
 </style>

@@ -1,5 +1,5 @@
 <template>
-    <div id="app">
+    <div id="app" @click="handleClick">
         <v-header />
         <router-view />
         <v-footer />
@@ -7,6 +7,7 @@
 </template>
 
 <script>
+    import { EventBus } from "./main";
     import vHeader from './components/vHeader.vue';
     import vFooter from './components/vFooter.vue';
 
@@ -15,6 +16,11 @@
         components: {
             'v-header': vHeader,
             'v-footer': vFooter
+        },
+        methods: {
+            handleClick (e) {
+                EventBus.$emit('background-click', e)
+            }
         }
     }
 </script>

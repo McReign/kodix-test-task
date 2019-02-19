@@ -3,20 +3,25 @@
         <label class="label">{{label}}</label>
         <div class="colors-list">
             <div class="colors-line" v-for="(line, lineNumber) in getLinesCount">
-                <div
-                    :class="{'color-item': true, 'selected': checkSelected(item)}"
+                <v-color-item
                     v-for="item in getSplitedColors[lineNumber]"
-                    :style="{'background-color': item}"
-                    @click="handleSelect(item)"
-                ></div>
+                    :color="item"
+                    :selected="checkSelected(item.name)"
+                    @select="handleSelect"
+                />
             </div>
         </div>
     </div>
 </template>
 
 <script>
+    import vColorItem from './vColorItem';
+
     export default {
         name: "vColorPicker",
+        components: {
+            'v-color-item': vColorItem
+        },
         props: {
             label: {
                 type: String,
@@ -33,6 +38,13 @@
             maxLineSize: {
                 type: String,
                 default: '5'
+            },
+            mode: {
+                type: String,
+                default: 'single',
+                validator: (value) => {
+                    return ['single', 'multiple'].indexOf(value) !== -1
+                }
             }
         },
         data () {
@@ -44,6 +56,7 @@
             getLinesCount () {
                 return Math.ceil(this.colors.length / +this.maxLineSize)
             },
+            // Splitting colors array into parts with length = maxLineSize
             getSplitedColors () {
                 return [].concat.apply([],
                     this.colors.map((elem, index) => {
@@ -54,12 +67,16 @@
         },
         methods: {
             checkSelected (item) {
-                return this.ownValues.includes(item)
+                return this.ownValues.map(item => item.name).includes(item)
             },
             handleSelect (item) {
-                this.ownValues.includes(item) ?
-                    this.ownValues = this.ownValues.filter(color => color !== item)
-                    : this.ownValues.push(item)
+                if (this.ownValues.map(item => item.name).includes(item)) {
+                    this.ownValues = this.ownValues.filter(color => color.name !== item)
+                }
+                else {
+                    this.mode === 'single' ? this.ownValues = [] : null
+                    this.ownValues.push(this.colors.filter(color => color.name === item)[0])
+                }
 
                 this.$emit('select', this.ownValues)
             }
@@ -74,15 +91,18 @@
 
 <style lang="scss" scoped>
     .v-color-picker {
+        position: relative;
 
         .label {
+            position: absolute;
             display: block;
             color: #999999;
             font-size: 12px;
             font-weight: 400;
             line-height: 18px;
-            margin-bottom: 10px;
+            padding-bottom: 5px;
             transition: .2s;
+            transform: translateY(-100%);
         }
 
         .colors-list {
@@ -90,42 +110,11 @@
             .colors-line {
                 display: flex;
                 align-items: center;
+                justify-content: space-between;
                 margin-bottom: 4px;
 
                 &:last-child {
                     margin-bottom: 0;
-                }
-
-                .color-item {
-                    position: relative;
-                    width: 20px;
-                    height: 20px;
-                    border: 1px solid #dddddd;
-                    border-radius: 50%;
-                    margin: 0 12px;
-                    cursor: pointer;
-
-                    &:first-child {
-                        margin-left: 0;
-                    }
-
-                    &:last-child {
-                        margin-right: 0;
-                    }
-
-                    &.selected {
-                        &::before {
-                            content: '';
-                            position: absolute;
-                            top: -4px;
-                            left: -4px;
-                            width: 28px;
-                            height: 28px;
-                            background-color: #c4092f;
-                            border-radius: 50%;
-                            z-index: -1;
-                        }
-                    }
                 }
             }
         }

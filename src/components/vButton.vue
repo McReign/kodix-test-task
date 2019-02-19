@@ -8,13 +8,17 @@
     export default {
         name: "vButton",
         props: {
+            type: {
+                type: String,
+                default: 'button'
+            },
             height: {
                 type: String,
                 default: '40px'
             },
             width: {
                 type: String,
-                default: '260px'
+                default: '100%'
             },
             disabled: {
                 type: Boolean,

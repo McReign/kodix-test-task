@@ -5,7 +5,9 @@ import store from './store'
 
 Vue.config.productionTip = false
 
-new Vue({
+export const EventBus = new Vue()
+
+export default new Vue({
   router,
   store,
   render: h => h(App)

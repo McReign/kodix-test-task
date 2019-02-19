@@ -2,12 +2,40 @@
     <div class="home">
         <div class="content">
             <div class="content__title"><span>¡Ay caramba!</span></div>
-            <v-select placeholder="Статус" :values="values" @change="handleStatusChange"/>
-            <!--<v-button class="send-btn" @click="handleSend">-->
-                <!--Отправить-->
-                <!--<img class="right-arrow-icon" src="../assets/arrow_right.svg">-->
-            <!--</v-button>-->
-            <!--<v-color-picker :colors="colors" />-->
+            <div class="content__form">
+                <div class="form-item name">
+                    <v-input placeholder="Название" :value="title" @input="handleNameChange"/>
+                </div>
+                <div class="form-item year">
+                    <v-input type="number" placeholder="Год" :value="year" @input="handleYearChange"/>
+                </div>
+                <div class="form-item price">
+                    <v-input type="number" placeholder="Цена" :value="price" @input="handlePriceChange"/>
+                </div>
+                <div class="form-item desc">
+                    <v-input placeholder="Описание" :value="desc" @input="handleDescChange"/>
+                </div>
+                <div class="form-item colors">
+                    <v-color-picker :colors="colors" mode="multiple" :values="colorsValues" @select="handleColorsSelect"/>
+                </div>
+                <div class="form-item status">
+                    <v-select placeholder="Статус" :values="values" :value="status" @change="handleStatusChange"/>
+                </div>
+                <div class="form-item send-btn-container">
+                    <v-button class="send-btn" @click="handleSend">
+                        Отправить
+                        <img class="right-arrow-icon" src="../assets/arrow_right.svg">
+                    </v-button>
+                </div>
+            </div>
+            <div class="content__cars-list">
+                <div class="title">
+                    <div class="marker"></div>
+                    Автомобили в наличии
+                </div>
+                <v-list :headers="carsHeaders" :data="getCarsData"/>
+                <v-list-mobile :data="getCarsData"/>
+            </div>
         </div>
     </div>
 </template>
@@ -17,6 +45,8 @@
     import vSelect from '../components/vSelect.vue';
     import vButton from '../components/vButton.vue';
     import vColorPicker from '../components/vColorPicker.vue';
+    import vList from '../components/vList.vue';
+    import vListMobile from '../components/vListMobile.vue';
 
     export default {
         name: 'home',
@@ -24,41 +54,94 @@
             'v-input': vInput,
             'v-select': vSelect,
             'v-button': vButton,
-            'v-color-picker': vColorPicker
+            'v-color-picker': vColorPicker,
+            'v-list': vList,
+            'v-list-mobile': vListMobile
         },
         data () {
             return {
-                name: '234',
+                title: '',
+                year: '',
+                price: '',
+                desc: '',
+                colorsValues: [],
                 status: null,
-                value: "In stock",
                 values: [
                     {
-                        value: 'In stock',
+                        value: 'in_stock',
                         name: 'В наличии'
                     },
                     {
-                        value: 'Waiting',
+                        value: 'pednding',
                         name: 'Ожидается'
                     },
                     {
-                        value: 'Not in stock',
+                        value: 'out_of_stock',
                         name: 'Нет в наличии'
                     }
                 ],
-                colors: ['#ffffff', '#000000', '#cbcbcc', '#d74345', '#88c504'],
+                colors: [
+                    {
+                        name: 'white',
+                        value: '#ffffff'
+                    },
+                    {
+                        name: 'black',
+                        value: '#000000'
+                    },
+                    {
+                        name: 'grey',
+                        value: '#cbcbcc'
+                    },
+                    {
+                        name: 'red',
+                        value: '#d74345'
+                    },
+                    {
+                        name: 'green',
+                        value: '#88c504'
+                    }
+                ],
+                carsHeaders: ['Название', 'Год', 'Цвет', 'Статус', 'Цена']
+            }
+        },
+        computed: {
+            getCarsData () {
+                return this.$store.getters['getFilteredCarsData']
             }
         },
         methods: {
             handleNameChange (value) {
-                this.name = value
+                this.title = value
+            },
+            handleYearChange (value) {
+                this.year = value
+            },
+            handlePriceChange (value) {
+                this.price = value
+            },
+            handleDescChange (value) {
+                this.desc = value
+            },
+            handleColorsSelect (values) {
+                this.colorsValues = values.map(item => item.name)
             },
             handleStatusChange (value) {
-                this.status = value
-                this.value = value.value
+                this.status = value.value
             },
             handleSend () {
-                console.log('Sended')
+                this.$store.dispatch('loadFilteredCarsData', {
+                    title: this.title,
+                    year: this.year,
+                    price: this.price,
+                    desc: this.desc,
+                    colors: this.colorsValues,
+                    status: this.status,
+                })
             }
+        },
+        created () {
+            this.$store.dispatch('loadCarsData')
         }
     }
 </script>
@@ -87,9 +170,132 @@
                 }
             }
 
-            .send-btn {
-                .right-arrow-icon {
-                    margin-left: 8px;
+            &__form {
+                display: flex;
+                align-items: center;
+                flex-wrap: wrap;
+                margin-left: -10px;
+                margin-right: -10px;
+                margin-bottom: 158px;
+
+                .form-item {
+                    margin-bottom: 30px;
+                    padding: 0 10px;
+
+                    &.name {
+                        flex-grow: 1;
+                    }
+
+                    &.year {
+                        flex-grow: 1;
+                    }
+
+                    &.price {
+                        flex-grow: 1;
+                    }
+
+                    &.desc {
+                        width: 100%;
+                        flex-grow: 1;
+                    }
+
+                    &.colors {
+                        flex-grow: 1;
+                    }
+
+                    &.status {
+                        flex-grow: 1;
+                    }
+
+                    &.send-btn-container {
+                        flex-grow: 1;
+                    }
+                }
+
+                .send-btn {
+                    .right-arrow-icon {
+                        margin-left: 8px;
+                    }
+                }
+            }
+
+            &__cars-list {
+                margin-bottom: 158px;
+
+                .title {
+                    display: flex;
+                    align-items: center;
+                    color: #282d30;
+                    font-size: 20px;
+                    font-weight: 700;
+                    text-transform: uppercase;
+                    margin-bottom: 28px;
+
+                    .marker {
+                        width: 3px;
+                        height: 18px;
+                        background-color: #8b9497;
+                        margin-right: 10px;
+                    }
+                }
+            }
+
+            @media all and (max-width: 740px) {
+                padding: 0 10px;
+
+                &__form {
+                    margin-bottom: 40px;
+                }
+
+                &__cars-list {
+                    margin-bottom: 60px;
+                }
+            }
+
+            @media all and (max-width: 506px) {
+                padding: 0 10px;
+
+                .form-item {
+                    &.name {
+                        width: 100%;
+                        flex-grow: 1;
+                    }
+
+                    &.year {
+                        flex-grow: 1;
+                    }
+
+                    &.price {
+                        flex-grow: 1;
+                    }
+
+                    &.desc {
+                        width: 100%;
+                        flex-grow: 1;
+                    }
+
+                    &.colors {
+                        width: 100%;
+                        flex-grow: 1;
+                    }
+
+                    &.status {
+                        flex-grow: 1;
+                    }
+
+                    &.send-btn-container {
+                        flex-grow: 1;
+                    }
+                }
+
+                &__cars-list {
+                    margin-bottom: 0;
+                    margin-left: -10px;
+                    margin-right: -10px;
+
+                    .title {
+                        display: none;
+                    }
                 }
             }
         }
