@@ -21,6 +21,9 @@
             handleClick (e) {
                 EventBus.$emit('background-click', e)
             }
+        },
+        created () {
+            this.$store.dispatch('loadCarsData')
         }
     }
 </script>

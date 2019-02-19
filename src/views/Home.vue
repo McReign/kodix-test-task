@@ -147,11 +147,6 @@
             handleAdd () {
                 this.$router.push('/add')
             }
-        },
-        created () {
-            if (!this.getCarsData.length) {
-                this.$store.dispatch('loadCarsData')
-            }
         }
     }
 </script>
