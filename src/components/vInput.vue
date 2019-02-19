@@ -10,6 +10,7 @@
             @focus="handleInputFocus"
             @blur="handleInputBlur"
             @input="handleInput"
+            @change="handleChange"
         >
         <label :class="{'label': true, 'shown': focused || ownValue}">{{placeholder}}</label>
     </div>
@@ -44,10 +45,10 @@
                 default: ''
             },
             max: {
-                type: String
+                type: [String, Number]
             },
             min: {
-                type: String
+                type: [String, Number]
             },
             invalid: {
                 type: Boolean,
@@ -69,6 +70,21 @@
             },
             handleInput (e) {
                 let value = e.target.value
+
+                this.ownValue = value
+                this.$emit('input', value)
+            },
+            handleChange (e) {
+                let value = e.target.value
+
+                if (this.type === 'number' && value) {
+                    +value > +this.max ?
+                        value = this.max.toString()
+                        : +value < +this.min ?
+                        value = this.min.toString()
+                        : null
+                }
+
                 this.ownValue = value
                 this.$emit('input', value)
             }

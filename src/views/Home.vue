@@ -12,7 +12,14 @@
                     <v-input placeholder="Название" :value="title" @input="handleNameChange"/>
                 </div>
                 <div class="form-item year">
-                    <v-input type="number" placeholder="Год" :value="year" @input="handleYearChange"/>
+                    <v-input
+                        type="number"
+                        placeholder="Год"
+                        :value="year"
+                        min="1000"
+                        :max="new Date().getFullYear()"
+                        @input="handleYearChange"
+                    />
                 </div>
                 <div class="form-item price">
                     <v-input type="number" placeholder="Цена" :value="price" @input="handlePriceChange"/>
