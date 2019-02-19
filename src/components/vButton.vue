@@ -1,5 +1,5 @@
 <template>
-    <div class="v-button" :style="{height, width}" @click="handleClick">
+    <div :class="{'v-button': true, [role]: true }" :style="{height, width}" @click="handleClick">
         <slot>Подтвердить</slot>
     </div>
 </template>
@@ -23,6 +23,10 @@
             disabled: {
                 type: Boolean,
                 default: false
+            },
+            role: {
+                type: String,
+                default: 'primary'
             }
         },
         methods: {
@@ -39,8 +43,6 @@
         align-items: center;
         justify-content: center;
         border-radius: 4px;
-        background-color: #c4092f;
-        color: #ffffff;
         font-size: 16px;
         font-weight: 700;
         line-height: 36px;
@@ -49,12 +51,31 @@
         cursor: pointer;
         box-sizing: border-box;
 
-        &:hover {
-            background-color: darken(#c4092f, 4%);
+        &.primary {
+            background-color: #c4092f;
+            color: #ffffff;
+
+            &:hover {
+                background-color: darken(#c4092f, 4%);
+            }
+
+            &:active {
+                background-color: darken(#c4092f, 10%);
+            }
         }
 
-        &:active {
-            background-color: darken(#c4092f, 10%);
+        &.secondary {
+            background-color: #ffffff;
+            color: #282d30;
+            border: 2px solid #c4092f;
+
+            &:hover {
+                background-color: darken(#ffffff, 1%);
+            }
+
+            &:active {
+                background-color: darken(#ffffff, 4%);
+            }
         }
     }
 </style>

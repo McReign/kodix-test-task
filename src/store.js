@@ -42,8 +42,9 @@ export default new Vuex.Store({
         },
         addCar ({commit, state, getters}, payload) {
             return new Promise((res, rej) => {
-                commit('addCar', {...payload, id: uuid.v4()})
+                commit('addCar', {...payload, id: uuid.v4(), color: payload.colors[0]})
                 commit('setFilteredCarsData', state.carsData)
+                console.log('filtered', state.filteredCarsData)
                 res(state.filteredCarsData)
             })
         },

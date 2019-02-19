@@ -1,13 +1,13 @@
 <template>
-    <div class="home">
+    <div class="add-page">
         <div class="content">
-            <div class="content__title"><span>¡Ay caramba!</span></div>
+            <div class="content__header">
+                <v-button class="cancel-btn" @click="handleCancel" width="160px" role="secondary">
+                    Отмена
+                </v-button>
+                <div class="title"><span>Добавление</span></div>
+            </div>
             <div class="content__form">
-                <div class="form-item add-btn-container">
-                    <v-button class="add-btn" @click="handleAdd" role="secondary">
-                        Добавить автомобиль
-                    </v-button>
-                </div>
                 <div class="form-item name">
                     <v-input placeholder="Название" :value="title" @input="handleNameChange"/>
                 </div>
@@ -21,25 +21,17 @@
                     <v-input placeholder="Описание" :value="desc" @input="handleDescChange"/>
                 </div>
                 <div class="form-item colors">
-                    <v-color-picker :colors="colors" mode="multiple" :values="colorsValues" @select="handleColorsSelect"/>
+                    <v-color-picker :colors="colors" :values="colorsValues" @select="handleColorsSelect"/>
                 </div>
                 <div class="form-item status">
                     <v-select placeholder="Статус" :values="values" :value="status" @change="handleStatusChange"/>
                 </div>
                 <div class="form-item send-btn-container">
-                    <v-button class="send-btn" @click="handleSend">
-                        Отфильтровать
+                    <v-button class="send-btn" @click="handleAdd">
+                        Добавить
                         <img class="right-arrow-icon" src="../assets/arrow_right.svg">
                     </v-button>
                 </div>
-            </div>
-            <div class="content__cars-list">
-                <div class="title">
-                    <div class="marker"></div>
-                    Автомобили в наличии
-                </div>
-                <v-list :headers="carsHeaders" :data="getCarsData"/>
-                <v-list-mobile :data="getCarsData"/>
             </div>
         </div>
     </div>
@@ -54,7 +46,7 @@
     import vListMobile from '../components/vListMobile.vue';
 
     export default {
-        name: 'home',
+        name: 'add-page',
         components: {
             'v-input': vInput,
             'v-select': vSelect,
@@ -106,8 +98,7 @@
                         name: 'green',
                         value: '#88c504'
                     }
-                ],
-                carsHeaders: ['Название', 'Год', 'Цвет', 'Статус', 'Цена']
+                ]
             }
         },
         computed: {
@@ -134,8 +125,11 @@
             handleStatusChange (value) {
                 this.status = value.value
             },
-            handleSend () {
-                this.$store.dispatch('loadFilteredCarsData', {
+            handleCancel () {
+                this.$router.push('/')
+            },
+            handleAdd () {
+                this.$store.dispatch('addCar', {
                     title: this.title,
                     year: this.year,
                     price: this.price,
@@ -143,21 +137,19 @@
                     colors: this.colorsValues,
                     status: this.status,
                 })
-            },
-            handleAdd () {
-                this.$router.push('/add')
+                    .then(resp => {
+                        this.$router.push('/')
+                    })
             }
         },
         created () {
-            if (!this.getCarsData.length) {
-                this.$store.dispatch('loadCarsData')
-            }
+            this.$store.dispatch('loadCarsData')
         }
     }
 </script>
 
 <style lang="scss" scoped>
-    .home {
+    .add-page {
         flex: 1 0 auto;
 
         .content {
@@ -165,18 +157,21 @@
             height: 100%;
             margin: 0 auto;
             
-            &__title {
+            &__header {
                 display: flex;
-                justify-content: center;
+                flex-wrap: wrap;
+                justify-content: space-between;
                 align-items: center;
                 width: 100%;
                 padding: 60px 0;
 
-                span {
-                    color: #282d30;
-                    font-size: 42px;
-                    font-weight: 700;
-                    line-height: 42px;
+                .title {
+                    span {
+                        color: #282d30;
+                        font-size: 42px;
+                        font-weight: 700;
+                        line-height: 42px;
+                    }
                 }
             }
 
@@ -234,41 +229,25 @@
                 }
             }
 
-            &__cars-list {
-                margin-bottom: 158px;
-
-                .title {
-                    display: flex;
-                    align-items: center;
-                    color: #282d30;
-                    font-size: 20px;
-                    font-weight: 700;
-                    text-transform: uppercase;
-                    margin-bottom: 28px;
-
-                    .marker {
-                        width: 3px;
-                        height: 18px;
-                        background-color: #8b9497;
-                        margin-right: 10px;
-                    }
-                }
-            }
-
             @media all and (max-width: 740px) {
                 padding: 0 10px;
 
                 &__form {
                     margin-bottom: 40px;
                 }
-
-                &__cars-list {
-                    margin-bottom: 60px;
-                }
             }
 
             @media all and (max-width: 506px) {
                 padding: 0 10px;
+
+                .cancel-btn {
+                    width: 100%;
+                    margin-bottom: 20px;
+                }
+
+                .title {
+                    width: 100%;
+                }
 
                 .form-item {
                     &.name {
@@ -303,15 +282,6 @@
                     }
                 }
 
-                &__cars-list {
-                    margin-bottom: 0;
-                    margin-left: -10px;
-                    margin-right: -10px;
-
-                    .title {
-                        display: none;
-                    }
-                }
             }
         }
     }
