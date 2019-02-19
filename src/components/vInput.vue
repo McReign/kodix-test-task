@@ -1,5 +1,5 @@
 <template>
-    <div class="v-input-container" :style="{height, width}">
+    <div :class="{'v-input-container': true, 'invalid': invalid}" :style="{height, width}">
         <input
             class="v-input"
             :type="type"
@@ -48,6 +48,10 @@
             },
             min: {
                 type: String
+            },
+            invalid: {
+                type: Boolean,
+                default: false
             }
         },
         data () {
@@ -80,6 +84,16 @@
 <style lang="scss" scoped>
     .v-input-container {
         position: relative;
+
+        &.invalid {
+            .label {
+                color: #c4092f;
+            }
+
+            .v-input {
+                border-bottom-color: #c4092f;
+            }
+        }
 
         .label {
             position: absolute;

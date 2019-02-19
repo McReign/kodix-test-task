@@ -123,13 +123,13 @@
                 padding: 10px;
 
                 .remove-btn {
-                    display: flex;
-                    align-items: center;
+                    display: inline-block;
                     height: 30px;
                     padding: 0 20px;
                     border-radius: 20px;
                     font-size: 14px;
                     color: #8b9497;
+                    line-height: 30px;
                     transition: .2s;
                     cursor: pointer;
 

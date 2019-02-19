@@ -1,5 +1,5 @@
 <template>
-    <div :class="{'v-button': true, [role]: true }" :style="{height, width}" @click="handleClick">
+    <div :class="{'v-button': true, [role]: true}" :style="{height, width}" @click="handleClick">
         <slot>Подтвердить</slot>
     </div>
 </template>

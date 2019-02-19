@@ -9,13 +9,13 @@
             </div>
             <div class="content__form">
                 <div class="form-item name">
-                    <v-input placeholder="Название" :value="title" @input="handleNameChange"/>
+                    <v-input placeholder="Название" :value="title" @input="handleNameChange" :invalid="!titleIsValid"/>
                 </div>
                 <div class="form-item year">
-                    <v-input type="number" placeholder="Год" :value="year" @input="handleYearChange"/>
+                    <v-input type="number" placeholder="Год" :value="year" @input="handleYearChange" :invalid="!yearIsValid"/>
                 </div>
                 <div class="form-item price">
-                    <v-input type="number" placeholder="Цена" :value="price" @input="handlePriceChange"/>
+                    <v-input type="number" placeholder="Цена" :value="price" @input="handlePriceChange" :invalid="!priceIsValid"/>
                 </div>
                 <div class="form-item desc">
                     <v-input placeholder="Описание" :value="desc" @input="handleDescChange"/>
@@ -99,7 +99,10 @@
                         name: 'green',
                         value: '#88c504'
                     }
-                ]
+                ],
+                titleIsValid: true,
+                yearIsValid: true,
+                priceIsValid: true
             }
         },
         computed: {
@@ -130,18 +133,24 @@
                 this.$router.push('/')
             },
             handleAdd () {
-                this.$store.dispatch('addCar', {
-                    id: uuid.v4(),
-                    title: this.title,
-                    year: this.year,
-                    price: this.price,
-                    description: this.desc,
-                    color: this.colorsValues[0],
-                    status: this.status ? this.status : 'in_stock',
-                })
-                    .then(resp => {
-                        this.$router.push('/')
+                !this.title ? this.titleIsValid = false :  this.titleIsValid = true
+                !this.year ? this.yearIsValid = false :  this.yearIsValid = true
+                !this.price ? this.priceIsValid = false :  this.priceIsValid = true
+
+                if (this.titleIsValid && this.yearIsValid && this.priceIsValid) {
+                    this.$store.dispatch('addCar', {
+                        id: uuid.v4(),
+                        title: this.title,
+                        year: this.year,
+                        price: this.price,
+                        description: this.desc,
+                        color: this.colorsValues[0],
+                        status: this.status ? this.status : 'in_stock',
                     })
+                        .then(resp => {
+                            this.$router.push('/')
+                        })
+                }
             }
         }
     }
