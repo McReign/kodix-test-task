@@ -1,7 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from 'axios';
-import uuid from 'uuid';
 
 Vue.use(Vuex)
 
@@ -42,7 +41,7 @@ export default new Vuex.Store({
         },
         addCar ({commit, state, getters}, payload) {
             return new Promise((res, rej) => {
-                commit('addCar', {...payload, id: uuid.v4(), color: payload.colors[0]})
+                commit('addCar', payload)
                 commit('setFilteredCarsData', state.carsData)
                 console.log('filtered', state.filteredCarsData)
                 res(state.filteredCarsData)

@@ -38,6 +38,7 @@
 </template>
 
 <script>
+    import uuid from 'uuid';
     import vInput from '../components/vInput.vue';
     import vSelect from '../components/vSelect.vue';
     import vButton from '../components/vButton.vue';
@@ -130,20 +131,18 @@
             },
             handleAdd () {
                 this.$store.dispatch('addCar', {
+                    id: uuid.v4(),
                     title: this.title,
                     year: this.year,
                     price: this.price,
-                    desc: this.desc,
-                    colors: this.colorsValues,
-                    status: this.status,
+                    description: this.desc,
+                    color: this.colorsValues[0],
+                    status: this.status ? this.status : 'in_stock',
                 })
                     .then(resp => {
                         this.$router.push('/')
                     })
             }
-        },
-        created () {
-            this.$store.dispatch('loadCarsData')
         }
     }
 </script>
